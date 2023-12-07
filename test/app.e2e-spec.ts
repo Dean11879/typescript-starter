@@ -19,10 +19,24 @@ describe('AppController (e2e)', () => {
     await app.close();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+
+  it('/events (POST) - Create Event', async () => {
+    const eventData = {
+      title: 'Test Event',
+      description: 'This is a test event',
+      status: 'TODO',
+      startTime: '2023-12-31T18:00:00Z',
+      endTime: '2023-12-31T20:00:00Z',
+      invitees: [1, 2],
+    };
+
+    // Send a POST request to create the event
+    const createEventResponse = await request(app.getHttpServer())
+      .post('/events')
+      .send(eventData)
+      .expect(201);
+
+    expect(createEventResponse.body).toHaveProperty('id');
+    expect(createEventResponse.body.title).toEqual(eventData.title);
   });
 });

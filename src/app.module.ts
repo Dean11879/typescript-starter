@@ -1,14 +1,22 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Event } from './event';
-import { User } from './user';
+import { Event } from './event.entity';
+import { User } from './user.entity';
+import { EventModule } from './event.module';
+import { UserModule } from './user.module';
+import { EventService } from './event.service';
+import { UserService } from './user.service';
+import { EventController } from './event.controller';
+import { UserController } from './user.controller';
+
+
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      // Your database configuration here
+      // database configuration here
       type: 'mysql',
       host: 'localhost',
       port: 3306,
@@ -18,9 +26,12 @@ import { User } from './user';
       entities: [Event, User],
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([Event, User]),
+
+    EventModule,
+    UserModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, EventController, UserController],
+  providers: [AppService, EventService, UserService],
 })
 export class AppModule {}
+

@@ -1,34 +1,50 @@
-import { Controller, Get, Post, Param, Delete, Body } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { Event } from './event';
-import { User } from './user';
+import { Event } from './event.entity';
+import { User } from './user.entity';
+import { EventService } from './event.service';
+import { UserService } from './user.service';
 
-@Controller('events')
+@Controller('app')
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly eventService: EventService,
+    private readonly userService: UserService,
+  ) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+
+  // Event operations
+  async createEvent(event: Event): Promise<Event> {
+    return this.eventService.create(event);
   }
 
-  @Post()
-  create(@Body() event: Event): Promise<Event> {
-    return this.appService.create(event);
+  async findEvent(id: number): Promise<Event> {
+    return this.eventService.findOne(id);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string): Promise<Event> {
-    return this.appService.findOne(+id);
+  async removeEvent(id: number): Promise<void> {
+    return this.eventService.remove(id);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
-    return this.appService.remove(+id);
+  async mergeAllEvents(): Promise<void> {
+    return this.eventService.mergeAll();
   }
 
-  @Post('mergeAll')
-  mergeAll(): Promise<void> {
-    return this.appService.mergeAll();
+  // User operations
+  async createUser(user: User): Promise<User> {
+    return this.userService.create(user);
+  }
+
+  async findAllUsers(): Promise<User[]> {
+    return this.userService.findAll();
+  }
+
+  async findUser(id: number): Promise<User> {
+    return this.userService.findOne(id);
+  }
+
+  async removeUser(id: number): Promise<void> {
+    return this.userService.remove(id);
   }
 }
